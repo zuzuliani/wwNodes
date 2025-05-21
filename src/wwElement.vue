@@ -3,6 +3,7 @@
     <VueFlow
       :nodes="nodes"
       :edges="edges"
+      :nodesDraggable="true"
       @nodesChange="onNodesChange"
       @edgesChange="onEdgesChange"
       class="vue-flow-wrapper"
@@ -15,7 +16,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { VueFlow, applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
@@ -37,19 +38,22 @@ export default {
     uid: { type: String, required: true },
   },
   setup(props) {
-    const { value: elements, setValue: setElements } = wwLib.wwVariable.useComponentVariable({
+    // Only use initial data on mount
+    const initialElements = props.content.elements || [];
+    const nodes = ref(initialElements.filter(el => !el.source && !el.target));
+    const edges = ref(initialElements.filter(el => el.source && el.target));
+
+    // Expose the current state to WeWeb
+    const { setValue: setElements } = wwLib.wwVariable.useComponentVariable({
       uid: props.uid,
       name: "elements",
       type: "array",
-      defaultValue: props.content.elements || [],
+      defaultValue: initialElements,
     });
 
-    const nodes = ref(elements.value.filter(el => !el.source && !el.target));
-    const edges = ref(elements.value.filter(el => el.source && el.target));
-
-    watch(elements, (newElements) => {
-      nodes.value = newElements.filter(el => !el.source && !el.target);
-      edges.value = newElements.filter(el => el.source && el.target);
+    // On mount, set the initial value
+    onMounted(() => {
+      setElements([...nodes.value, ...edges.value]);
     });
 
     function onNodesChange(changes) {
