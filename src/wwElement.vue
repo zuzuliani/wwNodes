@@ -1,11 +1,9 @@
 <template>
   <div class="my-element">
     <VueFlow
-      :nodes="nodes"
-      :edges="edges"
+      v-model:nodes="nodes"
+      v-model:edges="edges"
       :nodesDraggable="true"
-      @nodesChange="onNodesChange"
-      @edgesChange="onEdgesChange"
       class="vue-flow-wrapper"
     >
       <Background />
@@ -16,8 +14,8 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { VueFlow, applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
+import { ref, watch, onMounted } from 'vue';
+import { VueFlow } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 import { MiniMap } from '@vue-flow/minimap';
@@ -38,12 +36,10 @@ export default {
     uid: { type: String, required: true },
   },
   setup(props) {
-    // Only use initial data on mount
     const initialElements = props.content.elements || [];
     const nodes = ref(initialElements.filter(el => !el.source && !el.target));
     const edges = ref(initialElements.filter(el => el.source && el.target));
 
-    // Expose the current state to WeWeb
     const { setValue: setElements } = wwLib.wwVariable.useComponentVariable({
       uid: props.uid,
       name: "elements",
@@ -51,21 +47,20 @@ export default {
       defaultValue: initialElements,
     });
 
-    // On mount, set the initial value
+    // Watch for any change in nodes or edges and update the exposed variable
+    watch(
+      [nodes, edges],
+      () => {
+        setElements([...nodes.value, ...edges.value]);
+      },
+      { deep: true }
+    );
+
     onMounted(() => {
       setElements([...nodes.value, ...edges.value]);
     });
 
-    function onNodesChange(changes) {
-      nodes.value = applyNodeChanges(changes, nodes.value);
-      setElements([...nodes.value, ...edges.value]);
-    }
-    function onEdgesChange(changes) {
-      edges.value = applyEdgeChanges(changes, edges.value);
-      setElements([...nodes.value, ...edges.value]);
-    }
-
-    return { nodes, edges, onNodesChange, onEdgesChange };
+    return { nodes, edges };
   },
 };
 </script>
