@@ -102,7 +102,7 @@ export default {
       );
       
       if (edgeExists) {
-        console.log('Edge already exists');
+        console.log('Edge already existss');
         return;
       }
 
