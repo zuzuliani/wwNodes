@@ -5,6 +5,7 @@
       v-model:edges="edges"
       :nodesDraggable="true"
       class="vue-flow-wrapper"
+      @connect="onConnect"
     >
       <Background />
       <Controls />
@@ -15,7 +16,7 @@
 
 <script>
 import { ref, watch, onMounted } from 'vue';
-import { VueFlow } from '@vue-flow/core';
+import { VueFlow, useVueFlow } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 import { MiniMap } from '@vue-flow/minimap';
@@ -47,6 +48,36 @@ export default {
       defaultValue: initialElements,
     });
 
+    // Handle new edge connections
+    const onConnect = (params) => {
+      // Check if edge already exists
+      const edgeExists = edges.value.some(
+        edge => edge.source === params.source && edge.target === params.target
+      );
+      
+      if (edgeExists) {
+        console.log('Edge already exists');
+        return;
+      }
+
+      // Get source and target nodes
+      const sourceNode = nodes.value.find(node => node.id === params.source);
+      const targetNode = nodes.value.find(node => node.id === params.target);
+
+      // Check if we're connecting from source to target
+      if (sourceNode.type === 'output' || targetNode.type === 'input') {
+        console.log('Invalid connection: Cannot connect from output to input');
+        return;
+      }
+
+      const newEdge = {
+        id: `e${params.source}-${params.target}`,
+        source: params.source,
+        target: params.target,
+      };
+      edges.value = [...edges.value, newEdge];
+    };
+
     // Watch for any change in nodes or edges and update the exposed variable
     watch(
       [nodes, edges],
@@ -60,7 +91,7 @@ export default {
       setElements([...nodes.value, ...edges.value]);
     });
 
-    return { nodes, edges };
+    return { nodes, edges, onConnect };
   },
 };
 </script>
