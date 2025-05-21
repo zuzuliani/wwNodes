@@ -1,6 +1,12 @@
 <template>
   <div class="my-element">
-    <VueFlow v-model="elements" class="vue-flow-wrapper">
+    <VueFlow
+      :nodes="nodes"
+      :edges="edges"
+      @nodesChange="onNodesChange"
+      @edgesChange="onEdgesChange"
+      class="vue-flow-wrapper"
+    >
       <Background />
       <Controls />
       <MiniMap />
@@ -9,14 +15,15 @@
 </template>
 
 <script>
-import { VueFlow } from '@vue-flow/core'
-import { Background } from '@vue-flow/background'
-import { Controls } from '@vue-flow/controls'
-import { MiniMap } from '@vue-flow/minimap'
-import '@vue-flow/core/dist/style.css'
-import '@vue-flow/core/dist/theme-default.css'
-import '@vue-flow/controls/dist/style.css'
-import '@vue-flow/minimap/dist/style.css'
+import { ref, watch } from 'vue';
+import { VueFlow, applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
+import { Background } from '@vue-flow/background';
+import { Controls } from '@vue-flow/controls';
+import { MiniMap } from '@vue-flow/minimap';
+import '@vue-flow/core/dist/style.css';
+import '@vue-flow/core/dist/theme-default.css';
+import '@vue-flow/controls/dist/style.css';
+import '@vue-flow/minimap/dist/style.css';
 
 export default {
   components: {
@@ -27,19 +34,34 @@ export default {
   },
   props: {
     content: { type: Object, required: true },
+    uid: { type: String, required: true },
   },
-  data() {
-    return {
-      elements: this.content.elements || [],
+  setup(props) {
+    const { value: elements, setValue: setElements } = wwLib.wwVariable.useComponentVariable({
+      uid: props.uid,
+      name: "elements",
+      type: "array",
+      defaultValue: props.content.elements || [],
+    });
+
+    const nodes = ref(elements.value.filter(el => !el.source && !el.target));
+    const edges = ref(elements.value.filter(el => el.source && el.target));
+
+    watch(elements, (newElements) => {
+      nodes.value = newElements.filter(el => !el.source && !el.target);
+      edges.value = newElements.filter(el => el.source && el.target);
+    });
+
+    function onNodesChange(changes) {
+      nodes.value = applyNodeChanges(changes, nodes.value);
+      setElements([...nodes.value, ...edges.value]);
     }
-  },
-  watch: {
-    'content.elements': {
-      handler(newVal) {
-        this.elements = newVal || [];
-      },
-      deep: true,
-    },
+    function onEdgesChange(changes) {
+      edges.value = applyEdgeChanges(changes, edges.value);
+      setElements([...nodes.value, ...edges.value]);
+    }
+
+    return { nodes, edges, onNodesChange, onEdgesChange };
   },
 };
 </script>
