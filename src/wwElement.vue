@@ -5,7 +5,6 @@
       v-model:edges="edges"
       :nodesDraggable="true"
       class="vue-flow-wrapper"
-      :key="nodes.length + '-' + edges.length"
       @connect="onConnect"
       @selectionStart="onSelectionStart"
       @selectionEnd="onSelectionEnd"
@@ -130,26 +129,6 @@ export default {
       [nodes, edges],
       () => {
         setElements([...nodes.value, ...edges.value]);
-      },
-      { deep: true }
-    );
-
-    // Watcher to sync with external variable changes
-    watch(
-      () => props.content.elements,
-      (newElements) => {
-        if (!newElements) return;
-        
-        const newNodes = newElements.filter(el => !el.source && !el.target);
-        const newEdges = newElements.filter(el => el.source && el.target);
-        
-        // Only update if there are actual changes
-        if (JSON.stringify(nodes.value) !== JSON.stringify(newNodes)) {
-          nodes.value = newNodes;
-        }
-        if (JSON.stringify(edges.value) !== JSON.stringify(newEdges)) {
-          edges.value = newEdges;
-        }
       },
       { deep: true }
     );
