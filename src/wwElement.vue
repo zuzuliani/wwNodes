@@ -40,6 +40,7 @@ export default {
   props: {
     content: { type: Object, required: true },
     uid: { type: String, required: true },
+    height: { type: Number, default: 500 },
   },
   setup(props) {
     const initialElements = props.content.elements || [];
@@ -166,7 +167,7 @@ export default {
 <style lang="scss" scoped>
 .my-element {
   width: 100%;
-  height: 500px;
+  height: v-bind(height + 'px');
   outline: none; /* Remove focus outline */
   
   .vue-flow-wrapper {
