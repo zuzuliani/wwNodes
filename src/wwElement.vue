@@ -13,13 +13,13 @@
       @nodes-initialized="layoutGraph('LR')"
     >
       <template #node-start="props">
-        <DefaultNode v-bind="props" />
+        <DefaultNode v-bind="props" @edit-click="onEditClick" />
       </template>
       <template #node-regular="props">
-        <DefaultNode v-bind="props" />
+        <DefaultNode v-bind="props" @edit-click="onEditClick" />
       </template>
       <template #node-end="props">
-        <DefaultNode v-bind="props" />
+        <DefaultNode v-bind="props" @edit-click="onEditClick" />
       </template>
       <Background ref="backgroundRef" />
       <Controls />
@@ -313,6 +313,10 @@ export default {
       });
     }
 
+    const onEditClick = (nodeId) => {
+      emit('trigger-event', { name: 'onEditClick', event: { nodeId } });
+    };
+
     return { 
       nodes, 
       edges, 
@@ -330,6 +334,7 @@ export default {
       onDragStart,
       onCanvasDrop,
       layoutGraph,
+      onEditClick,
     };
   },
 };
