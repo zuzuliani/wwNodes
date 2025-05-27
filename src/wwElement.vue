@@ -8,7 +8,17 @@
       @connect="onConnect"
       @selectionStart="onSelectionStart"
       @selectionEnd="onSelectionEnd"
+      :minZoom="0.25"
     >
+      <template #node-start="props">
+        <DefaultNode v-bind="props" />
+      </template>
+      <template #node-regular="props">
+        <DefaultNode v-bind="props" />
+      </template>
+      <template #node-end="props">
+        <DefaultNode v-bind="props" />
+      </template>
       <Background />
       <Controls />
       <MiniMap />
@@ -25,6 +35,7 @@ import { VueFlow, useVueFlow } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 import { MiniMap } from '@vue-flow/minimap';
+import DefaultNode from './components/DefaultNode.vue';
 import '@vue-flow/core/dist/style.css';
 import '@vue-flow/core/dist/theme-default.css';
 import '@vue-flow/controls/dist/style.css';
@@ -36,6 +47,7 @@ export default {
     Background,
     Controls,
     MiniMap,
+    DefaultNode,
   },
   props: {
     content: { type: Object, required: true },
@@ -44,7 +56,10 @@ export default {
   },
   setup(props) {
     const initialElements = props.content.elements || [];
-    const nodes = ref(initialElements.filter(el => !el.source && !el.target));
+    const nodes = ref(initialElements.filter(el => !el.source && !el.target).map(node => ({
+      ...node,
+      // type is now 'start', 'regular', or 'end' from config
+    })));
     const edges = ref(initialElements.filter(el => el.source && el.target));
     const hasSelection = ref(false);
 
@@ -109,7 +124,9 @@ export default {
       () => props.content.elements,
       (newElements) => {
         if (!newElements) return;
-        nodes.value = newElements.filter(el => !el.source && !el.target);
+        nodes.value = newElements.filter(el => !el.source && !el.target).map(node => ({
+          ...node,
+        }));
         edges.value = newElements.filter(el => el.source && el.target);
       },
       { deep: true }
@@ -191,6 +208,23 @@ export default {
 
     &:hover {
       background: #ff0000;
+    }
+  }
+
+  /* Edge styling */
+  :deep(.vue-flow__edge-path) {
+    stroke-width: 3px;
+    stroke-dasharray: 10;  /* Makes the dots longer */
+    stroke-dashoffset: 0;
+    animation: flowAnimation 1s linear infinite;
+  }
+
+  @keyframes flowAnimation {
+    from {
+      stroke-dashoffset: 20;
+    }
+    to {
+      stroke-dashoffset: 0;
     }
   }
 }

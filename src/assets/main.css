@@ -1,0 +1,6 @@
+/* Remove background, border, and shadow from Vue Flow node wrapper for default nodes */
+.vue-flow__node-default {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+} 
