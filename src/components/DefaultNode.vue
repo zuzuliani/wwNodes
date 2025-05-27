@@ -97,12 +97,12 @@ export default {
   border: none;
   border-radius: 20px;
   background: #fff;
-  min-width: 350px;
-  max-width: 500px;
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.10);
   position: relative;
   padding-bottom: 24px;
-  width: 100%;
   height: 100%;
   box-sizing: border-box;
   transition: all 0.2s ease;

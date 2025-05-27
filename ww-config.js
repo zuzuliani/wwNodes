@@ -67,11 +67,14 @@ export default {
       bindable: true,
     },
   },
-  triggers: [
+  triggerEvents: [
     {
       name: "onEditClick",
       label: { en: "On edit click" },
-      event: "edit-click",
+    },
+    {
+      name: "add-node-requested",
+      label: { en: "On add node requested" },
     },
   ],
 };
