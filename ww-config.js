@@ -25,8 +25,7 @@ export default {
             type: 'start',
             title: 'Start Node',
             description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.',
-            agent: 'Start Agent',
-            nodeId: 'a1b2c3d4e5f6g7h8i9j0'
+            agent: 'Start Agent'
           },
           position: { x: 250, y: 25 },
         },
@@ -37,8 +36,7 @@ export default {
             type: 'regular',
             title: 'Regular Node',
             description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.',
-            agent: 'Agent',
-            nodeId: 'k1l2m3n4o5p6q7r8s9t0'
+            agent: 'Agent'
           },
           position: { x: 100, y: 125 },
         },
@@ -49,8 +47,7 @@ export default {
             type: 'end',
             title: 'End Node',
             description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.',
-            agent: 'End Agent',
-            nodeId: 'u1v2w3x4y5z6a7b8c9d0'
+            agent: 'End Agent'
           },
           position: { x: 250, y: 250 },
         },
@@ -70,4 +67,11 @@ export default {
       bindable: true,
     },
   },
+  triggers: [
+    {
+      name: "onEditClick",
+      label: { en: "On edit click" },
+      event: "edit-click",
+    },
+  ],
 };

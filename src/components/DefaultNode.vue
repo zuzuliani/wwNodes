@@ -14,7 +14,7 @@
     <div class="node-content">
       <div class="node-description">{{ description }}</div>
     </div>
-    <button class="edit-btn">Editar</button>
+    <button class="edit-btn" @click="onEditClick">Editar</button>
     <Handle
       v-if="nodeType !== 'end'"
       type="source"
@@ -82,6 +82,11 @@ export default {
     },
     headerColor() {
       return NODE_COLORS[this.nodeType] || NODE_COLORS.regular
+    }
+  },
+  methods: {
+    onEditClick() {
+      this.$emit('edit-click', this.id);
     }
   }
 }
